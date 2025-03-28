@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "https://ai-teacher-assistant-42f1b.web.app/static/css/main.7870162e.css",
-    "main.js": "https://ai-teacher-assistant-42f1b.web.app/static/js/main.a2e79f0b.js",
+    "main.js": "https://ai-teacher-assistant-42f1b.web.app/static/js/main.f5261953.js",
     "static/js/453.c3628494.chunk.js": "https://ai-teacher-assistant-42f1b.web.app/static/js/453.c3628494.chunk.js",
     "static/media/KaTeX_AMS-Regular.ttf": "https://ai-teacher-assistant-42f1b.web.app/static/media/KaTeX_AMS-Regular.853be92419a6c3766b9a.ttf",
     "static/media/KaTeX_Main-Regular.ttf": "https://ai-teacher-assistant-42f1b.web.app/static/media/KaTeX_Main-Regular.9eba1d77abcf2aa6e94e.ttf",
@@ -65,11 +65,11 @@
     "index.html": "https://ai-teacher-assistant-42f1b.web.app/index.html",
     "static/media/KaTeX_Size3-Regular.woff2": "https://ai-teacher-assistant-42f1b.web.app/static/media/KaTeX_Size3-Regular.e1951519f6f0596f7356.woff2",
     "main.7870162e.css.map": "https://ai-teacher-assistant-42f1b.web.app/static/css/main.7870162e.css.map",
-    "main.a2e79f0b.js.map": "https://ai-teacher-assistant-42f1b.web.app/static/js/main.a2e79f0b.js.map",
+    "main.f5261953.js.map": "https://ai-teacher-assistant-42f1b.web.app/static/js/main.f5261953.js.map",
     "453.c3628494.chunk.js.map": "https://ai-teacher-assistant-42f1b.web.app/static/js/453.c3628494.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.7870162e.css",
-    "static/js/main.a2e79f0b.js"
+    "static/js/main.f5261953.js"
   ]
 }
