@@ -281,15 +281,15 @@ const CreatorCredits = ({ classes }) => {
   const creators = [
     {
       name: 'Ayushman Nanda',
-      linkedin: 'https://www.linkedin.com/in/ayushman-nanda-0b7aa6205/'
+      linkedin: 'https://www.linkedin.com/in/ayushman-nanda-4a1377312/'
     },
     {
       name: 'Aman Prakash',
-      linkedin: 'https://www.linkedin.com/in/aman-prakash-973b46205/'
+      linkedin: 'https://www.linkedin.com/in/aman-prakash-baa32228a/'
     },
     {
       name: 'Aadersh Singh',
-      linkedin: 'https://www.linkedin.com/in/aadersh-singh-11ab80205/'
+      linkedin: 'https://www.linkedin.com/in/aadersh-kumar-188274356/'
     },
     {
       name: 'Akshat Jaiswal',
