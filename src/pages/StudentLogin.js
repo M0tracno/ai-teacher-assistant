@@ -62,6 +62,30 @@ const useStyles = makeStyles((theme) => ({
   submitButton: {
     marginTop: theme.spacing(2),
     padding: theme.spacing(1.5),
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+    transition: 'all 0.3s ease',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: -100,
+      width: '100%',
+      height: '100%',
+      background: 'rgba(255, 255, 255, 0.2)',
+      transform: 'skewX(-15deg)',
+      transition: 'all 0.5s ease',
+    },
+    '&:hover::before': {
+      left: 100,
+    },
+    '&:hover': {
+      transform: 'translateY(-3px)',
+      boxShadow: '0 7px 14px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.1)',
+    },
   },
   backLink: {
     textAlign: 'center',
@@ -74,13 +98,49 @@ const useStyles = makeStyles((theme) => ({
   demoButton: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(3),
-    backgroundColor: '#4caf50',
+    background: 'linear-gradient(45deg, #4caf50 30%, #2e7d32 90%)',
     color: 'white',
     padding: theme.spacing(1.5),
     fontWeight: 'bold',
     fontSize: '1rem',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 4px 20px rgba(76, 175, 80, 0.4)',
     '&:hover': {
-      backgroundColor: '#388e3c',
+      transform: 'translateY(-3px)',
+      boxShadow: '0 7px 30px rgba(76, 175, 80, 0.6)',
+    },
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      top: '-50%',
+      left: '-50%',
+      width: '200%',
+      height: '200%',
+      background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%)',
+      opacity: 0,
+      transform: 'scale(0.5)',
+      transition: 'all 0.5s ease-out',
+    },
+    '&:hover::after': {
+      opacity: 1,
+      transform: 'scale(1)',
+    },
+    animation: '$pulseGreen 2s infinite',
+  },
+  '@keyframes pulseGreen': {
+    '0%': {
+      boxShadow: '0 0 0 0 rgba(76, 175, 80, 0.4)',
+    },
+    '70%': {
+      boxShadow: '0 0 0 10px rgba(76, 175, 80, 0)',
+    },
+    '100%': {
+      boxShadow: '0 0 0 0 rgba(76, 175, 80, 0)',
     },
   },
   demoSection: {
@@ -268,4 +328,4 @@ function StudentLogin() {
   );
 }
 
-export default StudentLogin; 
+export default StudentLogin;

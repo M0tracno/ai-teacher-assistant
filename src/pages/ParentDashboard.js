@@ -34,6 +34,7 @@ import {
   TableRow,
   TextField
 } from '@material-ui/core';
+import { ROLES } from '../constants/appConstants';
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
@@ -227,17 +228,18 @@ function ParentDashboard() {
     }
   };
 
-  // Mock data for parent dashboard
-  const parentName = "Maria Johnson";
+  // Mock data for parent dashboard with mythological names
+  const parentName = "Gandhari";
   const children = [
     { 
       id: 1, 
-      name: 'Alex Johnson', 
+      name: 'Duryodhana', 
       grade: '10th', 
-      school: 'Lincoln High School',
-      studentId: 'S1001' 
+      school: 'Gurukul Academy',
+      studentId: 'S1001',
+      attendance: 95 
     }
-  ];
+  ] || [];
   
   // Mock grade data
   const gradesData = [
@@ -251,15 +253,15 @@ function ParentDashboard() {
   const teacherFeedback = [
     {
       id: 1,
-      teacherName: 'Dr. Smith',
-      subject: 'Mathematics',
+      teacherName: 'Dronacharya',
+      subject: 'Astras',
       date: '2023-06-12',
       feedback: 'Alex has shown significant improvement in calculus concepts. His problem-solving approach is methodical and well-organized. He should continue practicing complex integration problems to further strengthen his skills.'
     },
     {
       id: 2,
-      teacherName: 'Ms. Williams',
-      subject: 'English',
+      teacherName: 'Kripacharya',
+      subject: 'Dharma',
       date: '2023-06-07',
       feedback: 'Alex\'s essay demonstrated good analytical skills, but he needs to work on his thesis statements and conclusion paragraphs. His grammar and vocabulary usage are excellent.'
     }
@@ -424,18 +426,22 @@ function ParentDashboardHome({
   upcomingEvents,
   classes 
 }) {
-  const selectedChild = children[0]; // For simplicity, using the first child
+  // Define roleDisplay variable using the constant from appConstants
+  const roleDisplay = ROLES.PARENT_DISPLAY.split('/')[0]; // Use first parent name for display
   
-  // Calculate average grade
-  const totalScore = gradesData.reduce((sum, grade) => sum + grade.score, 0);
-  const averageScore = Math.round(totalScore / gradesData.length);
+  // Add null check for children array with default empty array
+  const selectedChild = (children || []).length > 0 ? children[0] : null;
+  
+  // Calculate average grade with proper null checks
+  const totalScore = Array.isArray(gradesData) ? gradesData.reduce((sum, grade) => sum + (grade?.score || 0), 0) : 0;
+  const averageScore = Array.isArray(gradesData) && gradesData.length > 0 ? Math.round(totalScore / gradesData.length) : 0;
 
   return (
     <Container>
       <div className={classes.greeting}>
         <Typography variant="h4">{greeting}, {parentName}</Typography>
         <Typography variant="subtitle1" className={classes.welcomeText}>
-          Stay up-to-date with your child's academic journey
+          Stay up-to-date with your child's academic journey as a guiding {roleDisplay}
         </Typography>
       </div>
       
@@ -448,30 +454,34 @@ function ParentDashboardHome({
             </Typography>
             <Divider style={{ marginBottom: 16 }} />
             
-            <Card className={classes.childInfoCard}>
-              <div className={classes.childIcon}>
-                <ChildrenIcon fontSize="large" />
-              </div>
-              <div className={classes.childInfo}>
-                <Typography variant="h6">{selectedChild.name}</Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Student ID: {selectedChild.studentId}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Grade: {selectedChild.grade} • {selectedChild.school}
-                </Typography>
-                <Box mt={1} display="flex" justifyContent="space-between" alignItems="center">
-                  <Box>
-                    <Typography variant="body2">
-                      Average Grade: <strong>{averageScore}%</strong>
-                    </Typography>
+            {selectedChild ? (
+              <Card className={classes.childInfoCard}>
+                <div className={classes.childIcon}>
+                  <ChildrenIcon fontSize="large" />
+                </div>
+                <div className={classes.childInfo}>
+                  <Typography variant="h6">{selectedChild.name}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Student ID: {selectedChild.studentId}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Grade: {selectedChild.grade} • {selectedChild.school}
+                  </Typography>
+                  <Box mt={1} display="flex" justifyContent="space-between" alignItems="center">
+                    <Box>
+                      <Typography variant="body2">
+                        Average Grade: <strong>{averageScore}%</strong>
+                      </Typography>
+                    </Box>
+                    <Button size="small" color="primary" component={Link} to="/parent-dashboard/grades">
+                      View Details
+                    </Button>
                   </Box>
-                  <Button size="small" color="primary" component={Link} to="/parent-dashboard/grades">
-                    View Details
-                  </Button>
-                </Box>
-              </div>
-            </Card>
+                </div>
+              </Card>
+            ) : (
+              <Typography variant="body1">No child information available</Typography>
+            )}
           </Paper>
         </Grid>
         
@@ -483,34 +493,40 @@ function ParentDashboardHome({
             </Typography>
             <Divider style={{ marginBottom: 16 }} />
             
-            {gradesData.slice(0, 3).map((grade) => (
-              <Paper key={grade.id} className={classes.gradeCard} elevation={1}>
-                <Grid container spacing={2}>
-                  <Grid item xs={8}>
-                    <Typography variant="subtitle1" gutterBottom>
-                      <strong>{grade.subject}:</strong> {grade.assignment}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Date: {grade.date}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} style={{ textAlign: 'center' }}>
-                    <Typography variant="h5" style={{ fontWeight: 'bold', color: '#1976d2' }}>
-                      {grade.letterGrade}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {grade.score}/{grade.maxScore}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Paper>
-            ))}
-            
-            <Box mt={2} display="flex" justifyContent="center">
-              <Button color="primary" component={Link} to="/parent-dashboard/grades">
-                View All Grades
-              </Button>
-            </Box>
+            {gradesData && gradesData.length > 0 ? (
+              <>
+                {gradesData.slice(0, 3).map((grade) => (
+                  <Paper key={grade.id} className={classes.gradeCard} elevation={1}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={8}>
+                        <Typography variant="subtitle1" gutterBottom>
+                          <strong>{grade.subject}:</strong> {grade.assignment}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          Date: {grade.date}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4} style={{ textAlign: 'center' }}>
+                        <Typography variant="h5" style={{ fontWeight: 'bold', color: '#1976d2' }}>
+                          {grade.letterGrade}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {grade.score}/{grade.maxScore}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                ))}
+                
+                <Box mt={2} display="flex" justifyContent="center">
+                  <Button color="primary" component={Link} to="/parent-dashboard/grades">
+                    View All Grades
+                  </Button>
+                </Box>
+              </>
+            ) : (
+              <Typography variant="body1">No grades available</Typography>
+            )}
           </Paper>
         </Grid>
         
@@ -522,25 +538,31 @@ function ParentDashboardHome({
             </Typography>
             <Divider style={{ marginBottom: 16 }} />
             
-            {teacherFeedback.map((feedback) => (
-              <Paper key={feedback.id} className={classes.feedbackCard} elevation={1}>
-                <Typography variant="subtitle1" gutterBottom>
-                  <strong>{feedback.subject}</strong> - {feedback.teacherName}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" gutterBottom>
-                  Date: {feedback.date}
-                </Typography>
-                <Typography variant="body1">
-                  {feedback.feedback}
-                </Typography>
-              </Paper>
-            ))}
-            
-            <Box mt={2} display="flex" justifyContent="space-between">
-              <Button color="primary" component={Link} to="/parent-dashboard/communicate">
-                View All Feedback
-              </Button>
-            </Box>
+            {teacherFeedback && teacherFeedback.length > 0 ? (
+              <>
+                {teacherFeedback.map((feedback) => (
+                  <Paper key={feedback.id} className={classes.feedbackCard} elevation={1}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      <strong>{feedback.subject}</strong> - {feedback.teacherName}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      Date: {feedback.date}
+                    </Typography>
+                    <Typography variant="body1">
+                      {feedback.feedback}
+                    </Typography>
+                  </Paper>
+                ))}
+                
+                <Box mt={2} display="flex" justifyContent="space-between">
+                  <Button color="primary" component={Link} to="/parent-dashboard/communicate">
+                    View All Feedback
+                  </Button>
+                </Box>
+              </>
+            ) : (
+              <Typography variant="body1">No teacher feedback available</Typography>
+            )}
           </Paper>
         </Grid>
         
@@ -552,24 +574,28 @@ function ParentDashboardHome({
             </Typography>
             <Divider style={{ marginBottom: 16 }} />
             
-            {upcomingEvents.map((event) => (
-              <Card key={event.id} style={{ marginBottom: 12 }}>
-                <CardContent>
-                  <Typography variant="subtitle1">{event.title}</Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Date: {event.date}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Time: {event.time}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" color="primary">
-                    Add to Calendar
-                  </Button>
-                </CardActions>
-              </Card>
-            ))}
+            {upcomingEvents && upcomingEvents.length > 0 ? (
+              upcomingEvents.map((event) => (
+                <Card key={event.id} style={{ marginBottom: 12 }}>
+                  <CardContent>
+                    <Typography variant="subtitle1">{event.title}</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Date: {event.date}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Time: {event.time}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      Add to Calendar
+                    </Button>
+                  </CardActions>
+                </Card>
+              ))
+            ) : (
+              <Typography variant="body1">No upcoming events available</Typography>
+            )}
           </Paper>
         </Grid>
       </Grid>
@@ -599,15 +625,21 @@ function AcademicPerformance({ gradesData, classes }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {gradesData.map((grade) => (
-                <TableRow key={grade.id}>
-                  <TableCell>{grade.subject}</TableCell>
-                  <TableCell>{grade.assignment}</TableCell>
-                  <TableCell>{grade.date}</TableCell>
-                  <TableCell>{grade.score}/{grade.maxScore}</TableCell>
-                  <TableCell>{grade.letterGrade}</TableCell>
+              {gradesData && gradesData.length > 0 ? (
+                gradesData.map((grade) => (
+                  <TableRow key={grade.id}>
+                    <TableCell>{grade.subject}</TableCell>
+                    <TableCell>{grade.assignment}</TableCell>
+                    <TableCell>{grade.date}</TableCell>
+                    <TableCell>{grade.score}/{grade.maxScore}</TableCell>
+                    <TableCell>{grade.letterGrade}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">No grades available</TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -621,27 +653,26 @@ function FeedbackView({ teacherFeedback, classes }) {
   return (
     <Container>
       <Paper className={classes.paper}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h6" gutterBottom>
           Teacher Feedback
         </Typography>
-        <Divider style={{ marginBottom: 16 }} />
-        
-        {teacherFeedback.map((feedback) => (
-          <Paper key={feedback.id} className={classes.feedbackCard} elevation={1}>
-            <Typography variant="h6" gutterBottom>
-              {feedback.subject} - {feedback.teacherName}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" gutterBottom>
-              Date: {feedback.date}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {feedback.feedback}
-            </Typography>
-            <Button size="small" color="primary">
-              Reply to Feedback
-            </Button>
-          </Paper>
-        ))}
+        {teacherFeedback && teacherFeedback.length > 0 ? (
+          teacherFeedback.map((feedback) => (
+            <Paper key={feedback.id} className={classes.feedbackCard}>
+              <Typography variant="subtitle1" gutterBottom>
+                {feedback.teacherName} - {new Date(feedback.date).toLocaleDateString()}
+              </Typography>
+              <Typography variant="body1" paragraph>
+                {feedback.feedback}
+              </Typography>
+              <Button size="small" color="primary">
+                Reply to Feedback
+              </Button>
+            </Paper>
+          ))
+        ) : (
+          <Typography variant="body1">No teacher feedback available</Typography>
+        )}
       </Paper>
     </Container>
   );
@@ -881,4 +912,4 @@ function MessageTeachers({ classes }) {
   );
 }
 
-export default ParentDashboard; 
+export default ParentDashboard;

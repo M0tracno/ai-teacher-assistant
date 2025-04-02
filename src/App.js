@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Container, Typography, Button, Box, Paper, Snackbar } from '@material-ui/core';
+import futuristicTheme from './theme/futuristicTheme';
+import { APP_NAME, ROLES, DASHBOARD_PATHS, LOGIN_PATHS } from './constants/appConstants';
 import { Alert } from '@material-ui/lab';
 
 // Auth components and context
@@ -68,24 +70,8 @@ class ErrorBoundary extends Component {
   }
 }
 
-// Create a theme instance
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#2196F3',
-    },
-    secondary: {
-      main: '#FF5722',
-    },
-  },
-  typography: {
-    fontFamily: [
-      'Roboto',
-      'Arial',
-      'sans-serif',
-    ].join(','),
-  },
-});
+// Use the futuristic theme
+const theme = futuristicTheme;
 
 // Private route component
 function PrivateRoute({ children, allowedRoles }) {
@@ -155,6 +141,17 @@ function DemoModeNotification() {
   const [open, setOpen] = useState(true); // Always show notification initially
   const demoRole = localStorage.getItem('demoRole') || 'admin';
   
+  // Get display name for role
+  const getRoleDisplay = (role) => {
+    switch(role) {
+      case 'faculty': return ROLES.FACULTY_DISPLAY;
+      case 'student': return ROLES.STUDENT_DISPLAY;
+      case 'parent': return ROLES.PARENT_DISPLAY;
+      case 'admin': return ROLES.ADMIN_DISPLAY;
+      default: return 'User';
+    }
+  };
+  
   useEffect(() => {
     if (demoMode) {
       setOpen(true);
@@ -174,10 +171,21 @@ function DemoModeNotification() {
       open={open}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       onClose={() => setOpen(false)}
+      style={{ zIndex: 9999 }}
     >
-      <Alert severity="info" onClose={() => setOpen(false)}>
-        <strong>Demo Mode Active</strong> - You are browsing as: {demoRole || 'User'} - 
-        Firebase is disabled for local deployment
+      <Alert 
+        severity="info" 
+        onClose={() => setOpen(false)}
+        style={{ 
+          background: 'rgba(58, 134, 255, 0.9)', 
+          color: 'white',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+          boxShadow: '0 8px 32px rgba(58, 134, 255, 0.3)'
+        }}
+      >
+        <strong>✨ {APP_NAME} Demo Active</strong> - You are experiencing as: {getRoleDisplay(demoRole)} - 
+        Firebase authentication is disabled
       </Alert>
     </Snackbar>
   );
@@ -217,6 +225,9 @@ function App() {
       href: window.location.href,
       publicUrl: process.env.PUBLIC_URL || '/'
     });
+    
+    // Set document title to app name
+    document.title = APP_NAME;
   }, [isDeployed]);
 
   return (
@@ -289,8 +300,8 @@ function DemoModeButton() {
   return (
     <div style={{ 
       position: 'fixed', 
-      bottom: '10px', 
-      right: '10px', 
+      bottom: '20px', 
+      right: '20px', 
       zIndex: 9999 
     }}>
       <Button 
@@ -298,7 +309,23 @@ function DemoModeButton() {
         color="secondary" 
         size="small"
         onClick={forceDemo}
-        style={{ opacity: 0.8 }}
+        style={{ 
+          opacity: 0.9,
+          background: 'linear-gradient(45deg, #8338ec 30%, #3a86ff 90%)',
+          boxShadow: '0 4px 20px rgba(131, 56, 236, 0.4)',
+          borderRadius: '30px',
+          padding: '8px 16px',
+          fontWeight: 500,
+          transition: 'all 0.3s ease',
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.transform = 'translateY(-3px)';
+          e.currentTarget.style.boxShadow = '0 7px 25px rgba(131, 56, 236, 0.6)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 4px 20px rgba(131, 56, 236, 0.4)';
+        }}
       >
         Enable Demo Mode
       </Button>
@@ -306,4 +333,4 @@ function DemoModeButton() {
   );
 }
 
-export default App; 
+export default App;

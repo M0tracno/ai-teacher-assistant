@@ -8,52 +8,67 @@ import reportWebVitals from './reportWebVitals';
 console.log('Environment Configuration:', {
   NODE_ENV: process.env.NODE_ENV,
   REACT_APP_API_URL: process.env.REACT_APP_API_URL,
-  PUBLIC_URL: process.env.PUBLIC_URL
+  PUBLIC_URL: process.env.PUBLIC_URL,
+  DEMO_MODE: process.env.REACT_APP_FORCE_DEMO_MODE
 });
 
 // Initialize demo mode
-localStorage.setItem('demoMode', 'true');
-if (!localStorage.getItem('demoRole')) {
-  localStorage.setItem('demoRole', 'admin');
+if (process.env.REACT_APP_FORCE_DEMO_MODE === 'true') {
+  localStorage.setItem('demoMode', 'true');
+  if (!localStorage.getItem('demoRole')) {
+    localStorage.setItem('demoRole', 'admin');
+  }
 }
 
 // Add error handling for debugging
 window.addEventListener('error', (event) => {
-  console.error('Global error caught:', event.error);
-  
-  // Show error details on page
-  document.body.innerHTML = `
-    <div style="padding: 20px; font-family: Arial, sans-serif;">
-      <h2 style="color: red;">Application Error</h2>
-      <p>Something went wrong while loading the application:</p>
-      <pre style="background: #f1f1f1; padding: 10px; border-radius: 5px; white-space: pre-wrap; max-width: 100%; overflow-x: auto;">
-Error: ${event.error?.message || 'Unknown error'}
-Stack: ${event.error?.stack || 'No stack trace available'}
-Location: ${window.location.href}
-API URL: ${process.env.REACT_APP_API_URL || 'Not set'}
-Demo Mode: ${localStorage.getItem('demoMode') || 'Not set'}
-Demo Role: ${localStorage.getItem('demoRole') || 'Not set'}
-      </pre>
-      <p>Please check the console for more details.</p>
-      <div style="margin-top: 20px;">
-        <button onclick="window.location.reload()" style="padding: 10px 20px; cursor: pointer; margin-right: 10px;">
-          Reload Application
-        </button>
-        <button onclick="localStorage.clear(); window.location.reload()" style="padding: 10px 20px; cursor: pointer;">
-          Clear Data & Reload
-        </button>
-      </div>
-    </div>
-  `;
+  console.error('Global error caught:', {
+    message: event.error?.message,
+    stack: event.error?.stack,
+    location: window.location.href,
+    timestamp: new Date().toISOString()
+  });
 });
 
-// React 17 rendering
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// Add unhandled promise rejection handling
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled Promise Rejection:', {
+    reason: event.reason,
+    location: window.location.href,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// React 18 rendering with error boundary
+const root = document.getElementById('root');
+const renderApp = () => {
+  try {
+    ReactDOM.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
+      root
+    );
+  } catch (error) {
+    console.error('Error rendering app:', error);
+    // Show error UI
+    root.innerHTML = `
+      <div style="padding: 20px; font-family: Arial, sans-serif;">
+        <h2 style="color: red;">Application Error</h2>
+        <p>Something went wrong while loading the application. Please try refreshing the page.</p>
+        <pre style="background: #f1f1f1; padding: 10px; border-radius: 5px; white-space: pre-wrap;">
+          Error: ${error.message}
+          Stack: ${error.stack}
+        </pre>
+        <button onclick="window.location.reload()" style="padding: 10px 20px; margin-top: 20px;">
+          Reload Application
+        </button>
+      </div>
+    `;
+  }
+};
+
+renderApp();
 
 // Performance monitoring
 reportWebVitals(console.log); 
