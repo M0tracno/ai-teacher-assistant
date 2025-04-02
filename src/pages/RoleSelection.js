@@ -281,21 +281,26 @@ const CreatorCredits = ({ classes }) => {
   const creators = [
     {
       name: 'Ayushman Nanda',
-      linkedin: 'www.linkedin.com/in/ayushman-nanda-4a1377312'
+      linkedin: 'https://www.linkedin.com/in/ayushman-nanda-0b7aa6205/'
     },
     {
       name: 'Aman Prakash',
-      linkedin: 'linkedin.com/in/aman-prakash-baa32228a'
+      linkedin: 'https://www.linkedin.com/in/aman-prakash-973b46205/'
     },
     {
       name: 'Aadersh Singh',
-      linkedin: 'www.linkedin.com/in/aadersh-kumar-188274356'
+      linkedin: 'https://www.linkedin.com/in/aadersh-singh-11ab80205/'
     },
     {
       name: 'Akshat Jaiswal',
       linkedin: 'https://www.linkedin.com/in/akshatjaiswal27/'
     }
   ];
+
+  const handleLinkedInClick = (url, e) => {
+    e.preventDefault();
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <Box className={classes.footer}>
@@ -304,9 +309,9 @@ const CreatorCredits = ({ classes }) => {
         {creators.map((creator, index) => (
           <React.Fragment key={creator.name}>
             <MaterialLink
+              component="a"
               href={creator.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={(e) => handleLinkedInClick(creator.linkedin, e)}
               className={classes.creatorLink}
             >
               {creator.name}
